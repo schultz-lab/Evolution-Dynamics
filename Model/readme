@@ -1,1 +1,3 @@
-
+'diagram.m' generates the plots in Figure 4CD.
+'objective_regulated.m' simulates the system with TetR regulation.
+'objective_constitutive.m' simulates the system with constitutive TetA expression.
