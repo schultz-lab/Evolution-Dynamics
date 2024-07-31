@@ -1,1 +1,4 @@
-
+'progression.m' generates the plots in Figure S1. Examples from these plots are used in Figure 1C and Figure 2C.
+'resistance.m' generates the plots in Figure S2. Examples from these plots are used in Figure 1D and Figure 2D.
+'comparison.m' generates the plots in Figure 1E and Figure 2E.
+'growth.m' calculates the growth rates used in these plots.
