@@ -1,1 +1,9 @@
+'plot_populations.m' generates the plot in Figure 3B.
+'plot_isolates.m' generates the plot in Figure 3C. 'plotcircle.m' plots the markers for this panel.
+'plot_transposons.m' generates the plot in Figure 4B.
 
+'plot_transposon_example.m' generates the plot in Figure 4A.
+
+The data folders contain the raw data files with the growth curves for WT, populations, isolates and transposon analysis. 
+For each experiment, 'growthanddelay.m' calculates the delay in growth recovery and the steady-state growth rate for each growth curve, and 'resistances.m' calculates the corresponding steady-state and dynamical resistance.
+These scripts also generate Figures SI4-7.
