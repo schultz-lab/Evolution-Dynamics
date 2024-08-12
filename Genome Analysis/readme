@@ -1,0 +1,4 @@
+Algorithm used to detect genome insertions in the tet operon. 
+
+Sites containing discordant paired end reads were collected whenever one end of the read aligned to the tet operon and one end aligned to the E. coli genome.  
+Reads aligned to these collected sites were then tallied as either matching the genome reference or containing a breakpoint.
