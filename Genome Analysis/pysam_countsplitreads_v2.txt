@@ -1,0 +1,90 @@
+# python pysam_countsplitreads_v2.py <input_bam.bam> <input_ref.fa>
+# Tim Sullivan
+# 11/2/21
+
+import sys
+import pysam
+from Bio.Seq import Seq
+
+bampath = sys.argv[1]
+reference = pysam.Fastafile(sys.argv[2])
+
+sites_to_count = [257903,
+360526,
+366797,
+484932,
+485246,
+1208841,
+1298719,
+1871059,
+1970499,
+1971414]
+
+data_dict = {x:[0,0] for x in sites_to_count}
+
+print ('\t'.join([str(x)+'_REF\t'+str(x)+'_INS' for x in sites_to_count]))
+
+with pysam.AlignmentFile(bampath,'rb') as bamfile:
+    for read in bamfile:
+        cigar = read.cigarstring
+        cigartuples = read.cigartuples
+        if not cigar:
+            continue
+
+        start = read.reference_start
+        length = 151
+
+        if cigartuples[0][1] == length:
+            for i in sites_to_count:
+                if i-start > 0 and i-start < length-10:
+                    data_dict[i] = [data_dict[i][0]+1, data_dict[i][1]]
+                
+        
+        #require that read is soft-clipped
+        if 'S' not in cigar:
+            continue
+
+        #require unique mapping 
+        if read.mapping_quality < 60:
+            continue
+
+        #ignore plasmid-aligning reads
+        if read.reference_name == "NODE_31_length_48962_cov_52.723371":
+            continue
+        if read.next_reference_name == "NODE_31_length_48962_cov_52.723371":
+            continue
+
+
+        pos1, pos2 = read.reference_start, read.next_reference_start
+        #ignore reads whose paired ends map near each other
+        if abs(int(pos2)-int(pos1)) < 2000:
+            continue
+
+        # 3' end soft clipped
+        if cigartuples[-1][0] == 4:
+            clip_length = cigartuples[-1][1]
+            if clip_length < 5:
+                continue
+
+            aligned_length = length - clip_length
+            clipping_position = read.reference_start + length - clip_length
+
+            for i in sites_to_count:
+                if abs(clipping_position - i) < 7:
+                    data_dict[i] = [data_dict[i][0], data_dict[i][1]+1]
+
+        # 5' end soft-clipped
+        if cigartuples[0][0] == 4:
+            clip_length = cigartuples[0][1]
+            if clip_length < 10:
+                continue
+
+            aligned_length = length-clip_length
+            clipping_position = read.reference_start
+
+            for i in sites_to_count:
+                if abs(clipping_position - i) < 7:
+                    data_dict[i] = [data_dict[i][0], data_dict[i][1]+1]
+
+print ('\t'.join(['\t'.join([str(x) for x in [data_dict[x][0], data_dict[x][1]]]) for x in sites_to_count]))
+
